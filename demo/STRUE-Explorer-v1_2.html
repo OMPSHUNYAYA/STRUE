@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>STRUE Explorer v1.2 - Structural Truth Engine</title>
+  <link rel="icon" href="data:," />
+  <style>
+    :root{
+      --bg:#07111f;
+      --panel:#0d1a2f;
+      --panel2:#10213a;
+      --card:rgba(255,255,255,.075);
+      --card2:rgba(255,255,255,.11);
+      --line:rgba(255,255,255,.14);
+      --text:#eef5ff;
+      --muted:#b7c6e4;
+      --brand:#78a8ff;
+      --mint:#69f0c8;
+      --gold:#ffc857;
+      --red:#ff7a7a;
+      --green:#7dffbf;
+      --shadow:0 22px 70px rgba(0,0,0,.34);
+      --radius:24px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      color:var(--text);
+      font-family:Inter,Segoe UI,Arial,sans-serif;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(120,168,255,.22), transparent 28%),
+        radial-gradient(circle at 100% 0%, rgba(105,240,200,.16), transparent 24%),
+        radial-gradient(circle at 50% 100%, rgba(255,200,87,.11), transparent 28%),
+        linear-gradient(180deg,#06101d 0%, #09172a 100%);
+    }
+    .loading{
+      position:fixed;
+      inset:0;
+      z-index:20;
+      display:grid;
+      place-items:center;
+      background:linear-gradient(180deg,#06101d,#09172a);
+      transition:opacity .35s ease, visibility .35s ease;
+    }
+    .loading.hidden{opacity:0;visibility:hidden}
+    .loader-card{
+      width:min(520px,calc(100vw - 32px));
+      border:1px solid var(--line);
+      border-radius:28px;
+      background:linear-gradient(135deg,rgba(120,168,255,.18),rgba(105,240,200,.08),rgba(255,200,87,.08));
+      box-shadow:var(--shadow);
+      padding:26px;
+      text-align:center;
+    }
+    .loader-card strong{display:block;font-size:1.35rem;margin-bottom:8px}
+    .loader-card span{display:block;color:var(--muted);line-height:1.5}
+    .loader-track{height:10px;border-radius:999px;background:rgba(255,255,255,.10);overflow:hidden;margin-top:18px;border:1px solid rgba(255,255,255,.08)}
+    .loader-bar{height:100%;width:42%;border-radius:999px;background:linear-gradient(90deg,var(--brand),var(--mint));animation:load 1.2s infinite alternate ease-in-out}
+    @keyframes load{from{transform:translateX(-60%)}to{transform:translateX(150%)}}
+    .wrap{max-width:1500px;margin:0 auto;padding:12px 18px 18px;display:grid;gap:12px}
+    .hero{
+      border:1px solid var(--line);
+      border-radius:24px;
+      padding:14px 18px;
+      background:linear-gradient(135deg,rgba(120,168,255,.22),rgba(105,240,200,.10),rgba(255,200,87,.09));
+      box-shadow:var(--shadow);
+      display:grid;
+      grid-template-columns:1.35fr .65fr;
+      gap:14px;
+      align-items:center;
+    }
+    .eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 11px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.08);color:var(--gold);font-size:.72rem;font-weight:900;letter-spacing:.09em;text-transform:uppercase}
+    h1{margin:8px 0 6px;font-size:clamp(1.7rem,3.35vw,3.35rem);line-height:.94;letter-spacing:-.05em}
+    .hero p{margin:0;color:var(--muted);font-size:.96rem;line-height:1.42;max-width:880px}
+    .formula{margin-top:9px;display:flex;flex-wrap:wrap;gap:7px}
+    code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:rgba(0,0,0,.30);border:1px solid rgba(255,255,255,.10);padding:3px 7px;border-radius:8px;color:#dbeaff;font-size:.88rem}
+    .hero-card{border:1px solid var(--line);border-radius:20px;background:rgba(0,0,0,.20);padding:13px 16px;display:grid;gap:7px}
+    .hero-card .big{font-size:1.85rem;font-weight:900;color:var(--mint);letter-spacing:-.04em}
+    .hero-card .small{color:var(--muted);line-height:1.34;font-size:.92rem}
+    .layout{display:grid;grid-template-columns:340px minmax(0,1fr) 380px;gap:16px}
+    .panel{border:1px solid var(--line);border-radius:var(--radius);background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.045));box-shadow:var(--shadow);overflow:hidden}
+    .panel h2{margin:0;padding:13px 16px;border-bottom:1px solid var(--line);font-size:1.02rem;letter-spacing:.01em}
+    .panel-body{padding:13px 16px}
+    .tree{display:grid;gap:8px}
+    .node{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid rgba(255,255,255,.10);border-radius:15px;background:rgba(255,255,255,.055);cursor:pointer;transition:.18s ease;user-select:none}
+    .node:hover{transform:translateX(3px);background:rgba(255,255,255,.09)}
+    .node.active{background:linear-gradient(135deg,rgba(120,168,255,.28),rgba(105,240,200,.14));border-color:rgba(120,168,255,.55)}
+    .indent1{margin-left:18px}.indent2{margin-left:36px}.indent3{margin-left:54px}
+    .icon{width:28px;height:28px;display:grid;place-items:center;border-radius:10px;background:rgba(0,0,0,.22)}
+    .node-text{min-width:0}.node-title{font-weight:850}.node-meta{font-size:.82rem;color:var(--muted);margin-top:2px}
+    .properties{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .prop{border:1px solid rgba(255,255,255,.10);border-radius:16px;background:rgba(255,255,255,.055);padding:11px 13px;min-height:74px}
+    .prop .label{font-size:.74rem;text-transform:uppercase;letter-spacing:.10em;color:var(--gold);font-weight:900;margin-bottom:8px}
+    .prop .value{font-size:1.27rem;font-weight:900;word-break:break-word;line-height:1.18}
+    .prop .value.small{font-size:.86rem;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;color:#dbeaff}
+    .status-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:14px}
+    .pill{padding:11px;border-radius:14px;border:1px solid rgba(255,255,255,.10);background:rgba(0,0,0,.22);font-weight:850;text-align:center;font-size:.88rem}
+    .pill.good{color:var(--green)}.pill.warn{color:var(--gold)}.pill.bad{color:var(--red)}
+    .compare{display:grid;gap:14px}
+    .bar-card{border:1px solid rgba(255,255,255,.10);border-radius:18px;background:rgba(255,255,255,.055);padding:14px}
+    .bar-head{display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;font-weight:850}
+    .bar-track{height:24px;border-radius:999px;background:rgba(0,0,0,.28);overflow:hidden;border:1px solid rgba(255,255,255,.08)}
+    .bar{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--brand),var(--mint));width:1%}
+    .bar.traversal{background:linear-gradient(90deg,var(--gold),#ff7a7a);width:100%}
+    .bar.strue{width:.66%;min-width:6px}
+    .actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    button{border:1px solid var(--line);border-radius:14px;padding:12px 13px;background:rgba(255,255,255,.075);color:var(--text);font-weight:850;cursor:pointer;transition:.18s ease;font-family:inherit}
+    button:hover{transform:translateY(-2px);background:rgba(255,255,255,.12)}
+    button.primary{background:linear-gradient(135deg,var(--brand),var(--mint));color:#06101d;border:none}
+    button.danger{background:rgba(255,122,122,.12);border-color:rgba(255,122,122,.28)}
+    .console{height:300px;overflow:auto;background:rgba(0,0,0,.34);border:1px solid rgba(255,255,255,.10);border-radius:18px;padding:14px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;color:#dbeaff;line-height:1.55;font-size:.86rem;white-space:pre-wrap}
+    .insight{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+    .insight-card{border:1px solid var(--line);border-radius:22px;background:rgba(255,255,255,.06);box-shadow:var(--shadow);padding:16px;min-height:158px}
+    .insight-card strong{display:block;color:var(--gold);font-size:.78rem;letter-spacing:.10em;text-transform:uppercase;margin-bottom:9px}
+    .insight-card span{display:block;font-weight:850;line-height:1.35}.insight-card p{margin:8px 0 0;color:var(--muted);line-height:1.5;font-size:.92rem}
+    .footer{color:var(--muted);text-align:center;line-height:1.6;padding:14px 0 30px}
+    .cert{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.75rem;line-height:1.45;word-break:break-all;color:#dbeaff;background:rgba(0,0,0,.23);border:1px solid rgba(255,255,255,.08);padding:12px;border-radius:14px;margin-top:12px}
+    .notice{margin-top:10px;padding:10px 12px;border-radius:14px;background:rgba(255,200,87,.10);border:1px solid rgba(255,200,87,.22);color:#ffe8a9;line-height:1.42;font-size:.88rem}
+    @media(max-width:1200px){.hero,.layout{grid-template-columns:1fr}.insight{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:720px){.wrap{padding:12px}.properties,.status-strip,.actions,.insight{grid-template-columns:1fr}h1{font-size:2.2rem}.hero{padding:18px;border-radius:24px}}
+  </style>
+</head>
+<body>
+  <div class="loading" id="loading">
+    <div class="loader-card">
+      <strong>Loading STRUE Explorer v1.2</strong>
+      <span>Preparing structural truth observatory, generation status, benchmark panels, and validation console.</span>
+      <div class="loader-track"><div class="loader-bar"></div></div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <section class="hero">
+      <div>
+        <div class="eyebrow">STRUE Explorer v1.2</div>
+        <h1>Structural Truth Engine</h1>
+        <p>STRUE demonstrates structural property retrieval from a maintained current structure. Full traversal remains available for verification, synchronization, recovery, and release validation.</p>
+        <div class="formula">
+          <code>truth_visible iff structure_updated</code>
+          <code>observable_truth = resolve(structure_state)</code>
+          <code>lookup_complexity = O(1)</code>
+          <code>traversal_complexity = O(n)</code>
+        </div>
+      </div>
+      <div class="hero-card">
+        <div class="big" id="speedupHero">152.368x</div>
+        <div class="small">v1.2 end-to-end measured comparison: index load plus lookup versus filesystem traversal on the demo tree.</div>
+        <div class="cert">status=PASS<br>structure_current=true<br>truth_visible=true<br>release_gate=validation</div>
+      </div>
+    </section>
+
+    <section class="layout">
+      <aside class="panel">
+        <h2>Folder Tree</h2>
+        <div class="panel-body tree" id="tree"></div>
+      </aside>
+
+      <main class="panel">
+        <h2>Maintained Structural Properties</h2>
+        <div class="panel-body">
+          <div class="properties">
+            <div class="prop"><div class="label">Path</div><div class="value" id="pathValue">Project</div></div>
+            <div class="prop"><div class="label">State</div><div class="value" id="stateValue">RESOLVED</div></div>
+            <div class="prop"><div class="label">Size Bytes</div><div class="value" id="sizeValue">63963</div></div>
+            <div class="prop"><div class="label">Files</div><div class="value" id="fileValue">1001</div></div>
+            <div class="prop"><div class="label">Dirs</div><div class="value" id="dirValue">4</div></div>
+            <div class="prop"><div class="label">Lookup</div><div class="value" id="lookupValue">3.1 us</div></div>
+            <div class="prop"><div class="label">Truth Source</div><div class="value">maintained structure</div></div>
+            <div class="prop"><div class="label">Property Traversal</div><div class="value">false</div></div>
+          </div>
+          <div class="cert" id="certificateValue">truth_certificate=c10ce7781fd05b93af540e0ea9fbcba739bdcbd0df4e93dd79ee0d3aa1a10195</div>
+          <div class="status-strip">
+            <div class="pill good" id="statusPill">status=PASS</div>
+            <div class="pill good" id="currentPill">current=true</div>
+            <div class="pill good" id="truthPill">truth=true</div>
+            <div class="pill good" id="releasePill">release=READY</div>
+          </div>
+          <div class="notice">Fast status checks index self-consistency and certificate integrity. Deep status, verify, and release gate perform full-tree rescans for out-of-band change detection.</div>
+        </div>
+      </main>
+
+      <aside class="panel">
+        <h2>v1.2 Console</h2>
+        <div class="panel-body">
+          <div class="actions">
+            <button class="primary" onclick="runAction('status')">Status</button>
+            <button onclick="runAction('deep')">Status Deep</button>
+            <button onclick="runAction('benchmark')">Benchmark</button>
+            <button onclick="runAction('verify')">Verify</button>
+            <button class="danger" onclick="runAction('corrupt')">Corrupt</button>
+            <button onclick="runAction('recover')">Recover</button>
+            <button onclick="runAction('batch')">Batch Mutation</button>
+            <button onclick="runAction('replay')">Replay</button>
+            <button onclick="runAction('releasegate')">Release Gate</button>
+          </div>
+          <div style="height:12px"></div>
+          <div class="console" id="console"></div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="panel">
+      <h2>Benchmark Framing</h2>
+      <div class="panel-body compare">
+        <div class="bar-card">
+          <div class="bar-head"><span>Filesystem traversal</span><span id="travMs">1339.574 ms</span></div>
+          <div class="bar-track"><div class="bar traversal"></div></div>
+        </div>
+        <div class="bar-card">
+          <div class="bar-head"><span>Index load plus lookup</span><span id="endToEndMs">8.792 ms</span></div>
+          <div class="bar-track"><div class="bar strue"></div></div>
+        </div>
+        <div class="bar-card">
+          <div class="bar-head"><span>Preloaded structure lookup</span><span id="strueUs">3.100 us</span></div>
+          <div class="bar-track"><div class="bar strue"></div></div>
+        </div>
+        <div class="notice">Speedups are descriptive measurements for the demo environment, not universal guarantees. The precise claim is query-time property retrieval from a maintained current structure.</div>
+      </div>
+    </section>
+
+    <section class="insight">
+      <div class="insight-card"><strong>Precise Claim</strong><span>Traversal-free property retrieval given a maintained current structure.</span><p>STRUE does not claim traversal disappears from initialization, verification, synchronization, recovery, or release validation.</p></div>
+      <div class="insight-card"><strong>Freshness Model</strong><span>Explicit sync is required for out-of-band changes.</span><p>Fast status checks the structure itself. Deep status verifies against the filesystem.</p></div>
+      <div class="insight-card"><strong>Benchmark Integrity</strong><span>Index load, lookup, and traversal are reported separately.</span><p>This avoids comparing only a hash-map lookup against a filesystem walk without disclosure.</p></div>
+      <div class="insight-card"><strong>Release Gate</strong><span>Release validation is maximum correctness validation.</span><p>It is intentionally full-tree and intended for integrity checks before external release.</p></div>
+    </section>
+
+    <div class="footer">
+      STRUE - Structural Truth Engine v1.2<br>
+      Maintain Structure. Make Truth Observable. Validate Before Release.
+    </div>
+  </div>
+
+  <script>
+    const nodes = {
+      "Project": {size:63963, files:1001, dirs:4, lookup:"3.1 us", state:"RESOLVED", cert:"a3b802e87a3e37e084ecb8163c18085b598a0c98491c59bf47ab495e808d1129", indent:0, icon:"📁", meta:"1001 files, 4 dirs"},
+      "Project/Data": {size:63952, files:1000, dirs:2, lookup:"2.4 us", state:"RESOLVED", cert:"d6fd90ca3e7f1d682c9c4ef0a4c6fa8d937f61c0d7b955e4cf8e2a1f865a59aa", indent:1, icon:"📁", meta:"1000 files, 2 dirs"},
+      "Project/Data/Raw": {size:63952, files:1000, dirs:1, lookup:"2.0 us", state:"RESOLVED", cert:"f1a8f0e2d92104f62024e1c51d541f661c1f52fd3de71cc064bfc016a7149221", indent:2, icon:"📁", meta:"1000 files"},
+      "Project/Docs": {size:11, files:1, dirs:1, lookup:"1.5 us", state:"RESOLVED", cert:"0ff2a6f44691e2c3807cc4f560bfed8f9f00456bfb6269e981f5f271b9b305b1", indent:1, icon:"📁", meta:"1 file"}
+    };
+
+    const rootTruthCertificate = "c10ce7781fd05b93af540e0ea9fbcba739bdcbd0df4e93dd79ee0d3aa1a10195";
+    const rootCertificate = "82448d7f54444b6243395b6c44e29133b6a23484b3cf4040240ae982431d01cc";
+    let selected = "Project";
+    let corrupted = false;
+    let structureGeneration = 1;
+    let currentGeneration = 1;
+
+    function buildTree(){
+      const tree = document.getElementById("tree");
+      tree.innerHTML = "";
+      Object.keys(nodes).forEach(path => {
+        const n = nodes[path];
+        const div = document.createElement("div");
+        div.className = `node indent${n.indent} ${path === selected ? "active" : ""}`;
+        div.onclick = () => selectNode(path);
+        div.innerHTML = `<div class="icon">${n.icon}</div><div class="node-text"><div class="node-title">${path.split('/').pop()}</div><div class="node-meta">${n.meta}</div></div>`;
+        tree.appendChild(div);
+      });
+    }
+
+    function selectNode(path){
+      selected = path;
+      const n = nodes[path];
+      const partial = corrupted && path === "Project";
+      document.getElementById("pathValue").textContent = path;
+      document.getElementById("stateValue").textContent = partial ? "PARTIAL" : n.state;
+      document.getElementById("sizeValue").textContent = partial ? String(n.size + 9) : String(n.size);
+      document.getElementById("fileValue").textContent = n.files;
+      document.getElementById("dirValue").textContent = n.dirs;
+      document.getElementById("lookupValue").textContent = n.lookup;
+      document.getElementById("certificateValue").textContent = `truth_certificate=${rootTruthCertificate}\nselected_certificate=${partial ? "CORRUPTED" + n.cert.slice(0,16) : n.cert}`;
+      buildTree();
+      updatePills();
+    }
+
+    function log(text){
+      const c = document.getElementById("console");
+      c.textContent += text + "\n\n";
+      c.scrollTop = c.scrollHeight;
+    }
+
+    function updatePills(){
+      const ok = !corrupted;
+      const ids = ["statusPill","currentPill","truthPill"];
+      ids.forEach(id => {
+        const el = document.getElementById(id);
+        el.className = "pill " + (ok ? "good" : "bad");
+      });
+      document.getElementById("statusPill").textContent = ok ? "status=PASS" : "status=FAIL";
+      document.getElementById("currentPill").textContent = ok ? "current=true" : "current=false";
+      document.getElementById("truthPill").textContent = ok ? "truth=true" : "truth=false";
+      document.getElementById("releasePill").className = "pill " + (ok ? "good" : "bad");
+      document.getElementById("releasePill").textContent = ok ? "release=READY" : "release=BLOCKED";
+    }
+
+    function statusBlock(mode){
+      const deep = mode === "deep";
+      const ok = !corrupted;
+      return `STRUE_STATUS\nstatus=${ok ? "PASS" : "FAIL"}\nstatus_mode=${deep ? "deep_full_tree_rescan" : "fast_index_self_check"}\nfull_tree_rescan_used=${deep ? "true" : "false"}\nfast_check_scope=index_self_consistency_and_certificate_integrity\nout_of_band_detection=${deep ? "included" : "not_guaranteed_without_verify_or_sync"}\nstaleness_model=explicit_sync_required_for_out_of_band_changes\nstructure_generation=${structureGeneration}\nstructure_current_generation=${currentGeneration}\ngeneration_match=${String(structureGeneration === currentGeneration)}\nstructure_current=${String(ok)}\ntruth_visible=${String(ok)}\nsync_required=${String(!ok)}\nroot_state=${ok ? "RESOLVED" : "PARTIAL"}\nsize_bytes=63963\nfile_count=1001\ndir_count=5\naudit_issues=0\ndeep_mismatch_count=${ok ? 0 : 1}\ncertificate_integrity=${String(ok)}\ntruth_certificate=${rootTruthCertificate}\nroot_certificate=${rootCertificate}`;
+    }
+
+    function benchmarkBlock(){
+      return `STRUE_BENCHMARK\npath=Project\nstatus=${corrupted ? "FAIL" : "PASS"}\nbenchmark_scope=query-time retrieval with maintained current structure\nlookup_mode=preloaded_index\nend_to_end_mode=index_load_plus_lookup\nstaleness_model=explicit_sync_required_for_out_of_band_changes\nclaim=traversal-free property retrieval given a maintained current structure\nlookup_complexity=O(1)_with_preloaded_current_structure\ntraversal_complexity=O(n)_filesystem_walk\nbenchmark_scope_precision=speedups_are_descriptive_measurements_not_universal_guarantees\nindex_load_ms=8.789\npreloaded_structure_lookup_us=3.100\nstructure_query_total_ms=8.792\nfilesystem_traversal_ms=1339.574\nspeedup_preloaded_lookup_vs_traversal=432120.554\nspeedup_end_to_end_query_vs_traversal=152.368\nsize_bytes=63963\nfile_count=1001\ndir_count=4\nstate=${corrupted ? "PARTIAL" : "RESOLVED"}`;
+    }
+
+    function verifyBlock(){
+      const ok = !corrupted;
+      return `STRUE_VERIFY\nstatus=${ok ? "PASS" : "FAIL"}\nverification_mode=full_tree_rescan\nverification_cost=proportional_to_object_count\nstaleness_model=explicit_sync_required_for_out_of_band_changes\nroot_state=${ok ? "RESOLVED" : "PARTIAL"}\nstructure_current=${String(ok)}\ntruth_visible=${String(ok)}\nstale_or_corrupt_detected=${String(!ok)}\nmismatch_count=${ok ? 0 : 1}\nroot_certificate_index=${rootCertificate}\nroot_certificate_fresh=${ok ? rootCertificate : "DIFFERENT_AFTER_RESCAN"}\ntruth_certificate_index=${rootTruthCertificate}\ntruth_certificate_fresh=${ok ? rootTruthCertificate : "DIFFERENT_AFTER_RESCAN"}`;
+    }
+
+    function replayBlock(){
+      const ok = !corrupted;
+      return `STRUE_REPLAY_VERIFY\nstatus=${ok ? "PASS" : "FAIL"}\nreplay_mode=deterministic_truth_reconstruction\nsame_structure=${String(ok)}\nsame_truth=${String(ok)}\nsame_certificate=${String(ok)}\nsource_truth_certificate=${rootTruthCertificate}\nreplay_truth_certificate=${ok ? rootTruthCertificate : "DIFFERENT_AFTER_REPLAY"}\nsource_history_certificate=${rootCertificate}\nreplay_history_certificate=${ok ? rootCertificate : "DIFFERENT_AFTER_REPLAY"}`;
+    }
+
+    function releaseGateBlock(){
+      const ok = !corrupted;
+      return `STRUE_RELEASE_GATE\nstatus=${ok ? "PASS" : "FAIL"}\nvalidation_mode=full_tree_rescan\nvalidation_scope=maximum_correctness_release_validation\nintended_for=release_validation_and_integrity_gate\nvalidation_cost=proportional_to_object_count\nstaleness_model=explicit_sync_required_for_out_of_band_changes\nroot_state=${ok ? "RESOLVED" : "PARTIAL"}\nstructure_current=${String(ok)}\ntruth_visible=${String(ok)}\ncapsules=1006\nsize_bytes=63963\nfile_count=1001\ndir_count=5\nverify_issues=${ok ? 0 : 1}\naudit_issues=0\nmanifest_issues=0\ncertificate_integrity=${String(ok)}\ntruth_source=maintained_structure\ntraversal_used_for_property_lookup=false\npreloaded_structure_lookup_us=1.700\ntruth_certificate=${rootTruthCertificate}\nroot_certificate=${rootCertificate}`;
+    }
+
+    function runAction(action){
+      if(action === "status") log(statusBlock("fast"));
+      if(action === "deep") log(statusBlock("deep"));
+      if(action === "benchmark") log(benchmarkBlock());
+      if(action === "verify") log(verifyBlock());
+      if(action === "replay") log(replayBlock());
+      if(action === "releasegate") log(releaseGateBlock());
+      if(action === "corrupt"){
+        corrupted = true;
+        selectNode(selected);
+        log("STRUE_CORRUPT\nstatus=INJECTED\npath=Project\nmode=size\nnext=run status --deep, verify, or release gate");
+      }
+      if(action === "recover"){
+        corrupted = false;
+        structureGeneration += 1;
+        currentGeneration = structureGeneration;
+        selectNode(selected);
+        log(`STRUE_RECOVER\nstatus=PASS\nstructure_generation=${structureGeneration}\nstructure_current=true\ntruth_visible=true\ntruth_certificate=${rootTruthCertificate}`);
+      }
+      if(action === "batch"){
+        nodes.Project.size += 1590;
+        nodes.Project.files += 100;
+        nodes.Project.meta = `${nodes.Project.files} files, ${nodes.Project.dirs} dirs`;
+        structureGeneration += 1;
+        currentGeneration = structureGeneration;
+        selectNode("Project");
+        log(`STRUE_BATCH\ncount=100\nupdated_branch_count=103\nstructure_generation=${structureGeneration}\ntruth_certificate=updated\navg_mutation_us=3786.300`);
+      }
+    }
+
+    function currentState(){
+      const n = nodes[selected];
+      const ok = !corrupted;
+      return {
+        version: "1.2",
+        path: selected,
+        state: ok ? n.state : "PARTIAL",
+        size_bytes: ok ? n.size : n.size + 9,
+        file_count: n.files,
+        dir_count: n.dirs,
+        structure_current: ok,
+        truth_visible: ok,
+        lookup_us: Number(String(n.lookup).replace(" us", "")),
+        truth_source: "maintained_structure",
+        traversal_used_for_property_lookup: false,
+        truth_certificate: rootTruthCertificate
+      };
+    }
+
+    window.STRUE = {
+      show: function(){
+        const state = currentState();
+        console.table(state);
+        return state;
+      },
+      select: function(path){
+        if(!nodes[path]){
+          console.error("STRUE_SELECT_FAIL", "unknown path", path);
+          return null;
+        }
+        selectNode(path);
+        return this.show();
+      },
+      status: function(deep){
+        const text = statusBlock(deep ? "deep" : "fast");
+        log(text);
+        const result = {status: corrupted ? "FAIL" : "PASS", deep: !!deep, structure_current: !corrupted, truth_visible: !corrupted};
+        console.table(result);
+        return result;
+      },
+      benchmark: function(){
+        log(benchmarkBlock());
+        const result = {status: corrupted ? "FAIL" : "PASS", path:"Project", index_load_ms:8.789, preloaded_structure_lookup_us:3.100, structure_query_total_ms:8.792, filesystem_traversal_ms:1339.574, speedup_end_to_end_query_vs_traversal:152.368};
+        console.table(result);
+        return result;
+      },
+      verify: function(){
+        log(verifyBlock());
+        const result = {status: corrupted ? "FAIL" : "PASS", mismatch_count: corrupted ? 1 : 0};
+        console.table(result);
+        return result;
+      },
+      corrupt: function(){
+        runAction("corrupt");
+        return {status:"INJECTED", path:"Project", mode:"size"};
+      },
+      recover: function(){
+        runAction("recover");
+        return {status:"PASS", recovered:true, structure_generation:structureGeneration};
+      },
+      batch: function(count){
+        count = Number.isFinite(Number(count)) ? Number(count) : 100;
+        const rounds = Math.max(1, Math.round(count / 100));
+        for(let i = 0; i < rounds; i++) runAction("batch");
+        return {status:"PASS", op:"batch", count:count, file_count:nodes.Project.files, size_bytes:nodes.Project.size};
+      },
+      replay: function(){
+        log(replayBlock());
+        const result = {status: corrupted ? "FAIL" : "PASS", same_structure: !corrupted, same_truth: !corrupted, same_certificate: !corrupted};
+        console.table(result);
+        return result;
+      },
+      releaseGate: function(){
+        log(releaseGateBlock());
+        const result = {status: corrupted ? "FAIL" : "PASS", validation_scope:"maximum_correctness_release_validation", certificate_integrity:!corrupted};
+        console.table(result);
+        return result;
+      },
+      reset: function(){
+        corrupted = false;
+        structureGeneration = 1;
+        currentGeneration = 1;
+        nodes.Project.size = 63963;
+        nodes.Project.files = 1001;
+        nodes.Project.meta = "1001 files, 4 dirs";
+        selectNode("Project");
+        return {status:"PASS", reset:true};
+      },
+      smoke: function(){
+        const out = [];
+        out.push(this.show());
+        out.push(this.status(false));
+        out.push(this.status(true));
+        out.push(this.benchmark());
+        out.push(this.verify());
+        out.push(this.corrupt());
+        out.push(this.status(true));
+        out.push(this.verify());
+        out.push(this.recover());
+        out.push(this.verify());
+        out.push(this.replay());
+        out.push(this.releaseGate());
+        console.log("STRUE_SMOKE_COMPLETE", out);
+        return out;
+      }
+    };
+
+    buildTree();
+    selectNode("Project");
+    log("STRUE_EXPLORER\nstatus=READY\nversion=1.2\nmode=offline_html_demo\nclaim=traversal-free property retrieval given a maintained current structure");
+    setTimeout(() => document.getElementById("loading").classList.add("hidden"), 450);
+    console.log("STRUE console API ready. Try: STRUE.smoke()");
+  </script>
+</body>
+</html>
