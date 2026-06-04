@@ -6,6 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
+
   verify:
 
     runs-on: ubuntu-latest
@@ -25,7 +26,6 @@ jobs:
         run: |
 
           python - <<'PY'
-
           from pathlib import Path
           import sys
 
@@ -49,22 +49,25 @@ jobs:
               "VERIFY/VERIFY.txt",
               "VERIFY/FREEZE_DEMO_SHA256.txt",
               "VERIFY/benchmark_summary.txt",
-              "VERIFY/benchmark_raw_results.txt",
+              "VERIFY/benchmark_raw_results.txt"
+
           ]
 
-          missing = [p for p in required if not Path(p).exists()]
+          missing = [
+              p for p in required
+              if not Path(p).exists()
+          ]
 
           if missing:
 
               print("Missing files:")
 
               for x in missing:
-                  print("-",x)
+                  print("-", x)
 
               sys.exit(1)
 
           print("Repository structure verified.")
-
           PY
 
       - name: Verify frozen hashes
@@ -72,7 +75,6 @@ jobs:
         run: |
 
           python - <<'PY'
-
           import hashlib
           import re
           import sys
@@ -98,15 +100,25 @@ jobs:
                   Path(target).read_bytes()
               ).hexdigest().lower()
 
-              pattern = rf"{re.escape(target)}\s*SHA256:\s*([0-9a-f]{{64}})"
+              target_variants = [
 
-              m = re.search(
+                  re.escape(target),
+
+                  re.escape(
+                      target.replace("/", "\\")
+                  )
+
+              ]
+
+              pattern = rf"({'|'.join(target_variants)})\s*SHA256:\s*([0-9a-f]{{64}})"
+
+              match = re.search(
                   pattern,
                   freeze,
                   re.IGNORECASE
               )
 
-              if not m:
+              if not match:
 
                   print(
                       "Missing hash entry:",
@@ -115,7 +127,7 @@ jobs:
 
                   sys.exit(1)
 
-              expected = m.group(1).lower()
+              expected = match.group(2).lower()
 
               if expected != actual:
 
@@ -124,13 +136,19 @@ jobs:
                       target
                   )
 
-                  print(expected)
-                  print(actual)
+                  print(
+                      "Expected:",
+                      expected
+                  )
+
+                  print(
+                      "Actual:",
+                      actual
+                  )
 
                   sys.exit(1)
 
           print("Frozen hashes verified.")
-
           PY
 
       - name: Create demo
@@ -152,46 +170,55 @@ jobs:
         run: |
 
           python - <<'PY'
-
           import subprocess
           import re
           import sys
 
-          cmd=[
+          cmd = [
 
               sys.executable,
               "demo/STRUE_v1_2.py",
+
               "verify",
+
               "--root",
               "STRUE_DEMO"
 
           ]
 
-          r1=subprocess.run(
+          r1 = subprocess.run(
               cmd,
               capture_output=True,
               text=True,
               check=True
           )
 
-          r2=subprocess.run(
+          r2 = subprocess.run(
               cmd,
               capture_output=True,
               text=True,
               check=True
           )
 
-          pattern=r"(?:certificate|truth_certificate|root_certificate)=([0-9a-f]{64})"
+          pattern = r"(?:certificate|truth_certificate|root_certificate)=([0-9a-f]{64})"
 
-          c1=re.findall(
+          c1 = re.findall(
               pattern,
               r1.stdout
           )
 
-          c2=re.findall(
+          c2 = re.findall(
               pattern,
               r2.stdout
           )
+
+          if not c1:
+
+              print(
+                  "No certificates detected"
+              )
+
+              sys.exit(1)
 
           if c1 != c2:
 
@@ -201,10 +228,7 @@ jobs:
 
               sys.exit(1)
 
-          print(
-              "Replay verified."
-          )
-
+          print("Replay verified.")
           PY
 
       - name: Run benchmark
@@ -225,17 +249,16 @@ jobs:
         run: |
 
           python - <<'PY'
-
           from pathlib import Path
           import sys
 
-          text=Path(
+          text = Path(
               "README.md"
           ).read_text(
               encoding="utf-8"
           )
 
-          required=[
+          required = [
 
               "Structural Truth Engine",
 
@@ -251,10 +274,11 @@ jobs:
 
           ]
 
-          missing=[
-              x
-              for x in required
+          missing = [
+
+              x for x in required
               if x not in text
+
           ]
 
           if missing:
@@ -267,8 +291,5 @@ jobs:
 
               sys.exit(1)
 
-          print(
-              "README verified."
-          )
-
+          print("README verified.")
           PY
