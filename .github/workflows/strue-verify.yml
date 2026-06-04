@@ -1,0 +1,276 @@
+```yaml
+name: strue-verify
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  verify:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Verify repository structure
+        shell: bash
+        run: |
+
+          python - <<'PY'
+
+          from pathlib import Path
+          import sys
+
+          required = [
+
+              "README.md",
+              "LICENSE",
+
+              "demo/STRUE_v1_2.py",
+              "demo/STRUE-Explorer-v1_2.html",
+
+              "docs/Quickstart.md",
+              "docs/FAQ.md",
+              "docs/Proof-Sketch.md",
+              "docs/STRUE-Architecture-Notes.md",
+              "docs/STRUE-Challenge.md",
+              "docs/STRUE-Diagram.png",
+              "docs/Dependency-Elimination-Framework.png",
+              "docs/Shunyaya-Structural-Stack.png",
+
+              "VERIFY/VERIFY.txt",
+              "VERIFY/FREEZE_DEMO_SHA256.txt",
+              "VERIFY/benchmark_summary.txt",
+              "VERIFY/benchmark_raw_results.txt",
+          ]
+
+          missing = [p for p in required if not Path(p).exists()]
+
+          if missing:
+
+              print("Missing files:")
+
+              for x in missing:
+                  print("-",x)
+
+              sys.exit(1)
+
+          print("Repository structure verified.")
+
+          PY
+
+      - name: Verify frozen hashes
+        shell: bash
+        run: |
+
+          python - <<'PY'
+
+          import hashlib
+          import re
+          import sys
+          from pathlib import Path
+
+          freeze = Path(
+              "VERIFY/FREEZE_DEMO_SHA256.txt"
+          ).read_text(
+              encoding="utf-8",
+              errors="replace"
+          )
+
+          targets = [
+
+              "demo/STRUE_v1_2.py",
+              "demo/STRUE-Explorer-v1_2.html"
+
+          ]
+
+          for target in targets:
+
+              actual = hashlib.sha256(
+                  Path(target).read_bytes()
+              ).hexdigest().lower()
+
+              pattern = rf"{re.escape(target)}\s*SHA256:\s*([0-9a-f]{{64}})"
+
+              m = re.search(
+                  pattern,
+                  freeze,
+                  re.IGNORECASE
+              )
+
+              if not m:
+
+                  print(
+                      "Missing hash entry:",
+                      target
+                  )
+
+                  sys.exit(1)
+
+              expected = m.group(1).lower()
+
+              if expected != actual:
+
+                  print(
+                      "Hash mismatch:",
+                      target
+                  )
+
+                  print(expected)
+                  print(actual)
+
+                  sys.exit(1)
+
+          print("Frozen hashes verified.")
+
+          PY
+
+      - name: Create demo
+        run: |
+
+          python demo/STRUE_v1_2.py demo \
+          --root STRUE_DEMO \
+          --files 1000 \
+          --clean
+
+      - name: Verify structural state
+        run: |
+
+          python demo/STRUE_v1_2.py status \
+          --root STRUE_DEMO
+
+      - name: Verify deterministic replay
+        shell: bash
+        run: |
+
+          python - <<'PY'
+
+          import subprocess
+          import re
+          import sys
+
+          cmd=[
+
+              sys.executable,
+              "demo/STRUE_v1_2.py",
+              "verify",
+              "--root",
+              "STRUE_DEMO"
+
+          ]
+
+          r1=subprocess.run(
+              cmd,
+              capture_output=True,
+              text=True,
+              check=True
+          )
+
+          r2=subprocess.run(
+              cmd,
+              capture_output=True,
+              text=True,
+              check=True
+          )
+
+          pattern=r"(?:certificate|truth_certificate|root_certificate)=([0-9a-f]{64})"
+
+          c1=re.findall(
+              pattern,
+              r1.stdout
+          )
+
+          c2=re.findall(
+              pattern,
+              r2.stdout
+          )
+
+          if c1 != c2:
+
+              print(
+                  "Replay divergence detected"
+              )
+
+              sys.exit(1)
+
+          print(
+              "Replay verified."
+          )
+
+          PY
+
+      - name: Run benchmark
+        run: |
+
+          python demo/STRUE_v1_2.py benchmark \
+          --root STRUE_DEMO \
+          --path Project
+
+      - name: Run release validation
+        run: |
+
+          python demo/STRUE_v1_2.py civilization \
+          --root STRUE_DEMO
+
+      - name: Verify README references
+        shell: bash
+        run: |
+
+          python - <<'PY'
+
+          from pathlib import Path
+          import sys
+
+          text=Path(
+              "README.md"
+          ).read_text(
+              encoding="utf-8"
+          )
+
+          required=[
+
+              "Structural Truth Engine",
+
+              "truth_visible iff structure_updated",
+
+              "same structure -> same truth",
+
+              "demo/STRUE_v1_2.py",
+
+              "VERIFY/FREEZE_DEMO_SHA256.txt",
+
+              "maintained_current_structure"
+
+          ]
+
+          missing=[
+              x
+              for x in required
+              if x not in text
+          ]
+
+          if missing:
+
+              print(
+                  "README missing:"
+              )
+
+              print(missing)
+
+              sys.exit(1)
+
+          print(
+              "README verified."
+          )
+
+          PY
+```
