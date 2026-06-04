@@ -130,7 +130,7 @@ STRUE/
 │   ├── STRUE-Challenge.md
 │   ├── Dependency-Elimination-Framework.png
 │   ├── Shunyaya-Structural-Stack.png
-│   └── STRUE_Diagram.png
+│   └── STRUE-Diagram.png
 ```
 
 Additional demonstrations may be added over time.
