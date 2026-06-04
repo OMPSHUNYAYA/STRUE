@@ -1,0 +1,21 @@
+STRUE Demo Freeze (SHA256)
+
+demo\STRUE_v1_2.py
+
+SHA256:
+
+4ea615079d898bae580a4f605787ef4ecd7af3e4211c7afccee6f7a7b47d3fa7
+
+demo\STRUE-Explorer-v1_2.html
+
+SHA256:
+
+6e6bb9a5e3063fa5aa1b8137a24fa6bd334b2e9808bb6d14c2fb213ae4caa870
+
+same file -> same hash
+
+different file -> different hash
+
+file hash = file identity
+
+certificate = structural truth artifact

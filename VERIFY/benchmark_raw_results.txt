@@ -1,0 +1,228 @@
+STRUE Benchmark Raw Results
+
+C:\Users\ASUS\Desktop\STRUE>python STRUE_v1_2.py demo --root STRUE_DEMO_1K --files 1000 --clean
+STRUE_DEMO_TREE
+root=C:\Users\ASUS\Desktop\STRUE\STRUE_DEMO_1K
+files_created=1001
+STRUE_INIT
+root=C:\Users\ASUS\Desktop\STRUE\STRUE_DEMO_1K
+capsules=1006
+root_size_bytes=63963
+root_file_count=1001
+root_dir_count=5
+root_certificate=82448d7f54444b6243395b6c44e29133b6a23484b3cf4040240ae982431d01cc
+truth_certificate=c10ce7781fd05b93af540e0ea9fbcba739bdcbd0df4e93dd79ee0d3aa1a10195
+elapsed_ms=1395.768
+STRUE_PROPERTIES
+path=Project
+state=RESOLVED
+size_bytes=63963
+file_count=1001
+dir_count=4
+mutation_id=1
+certificate=a3b802e87a3e37e084ecb8163c18085b598a0c98491c59bf47ab495e808d1129
+truth_source=maintained_structure
+traversal_used_for_property_lookup=false
+valid_when=structure_current
+staleness_model=explicit_sync_required_for_out_of_band_changes
+claim=traversal-free property retrieval given a maintained current structure
+preloaded_structure_lookup_us=2.900
+
+C:\Users\ASUS\Desktop\STRUE>
+C:\Users\ASUS\Desktop\STRUE>python STRUE_v1_2.py benchmark --root STRUE_DEMO_1K --path Project
+STRUE_BENCHMARK
+path=Project
+status=PASS
+benchmark_scope=query-time retrieval with maintained current structure
+lookup_mode=preloaded_index
+end_to_end_mode=index_load_plus_lookup
+staleness_model=explicit_sync_required_for_out_of_band_changes
+claim=traversal-free property retrieval given a maintained current structure
+lookup_complexity=O(1)_with_preloaded_current_structure
+traversal_complexity=O(n)_filesystem_walk
+benchmark_scope_precision=speedups_are_descriptive_measurements_not_universal_guarantees
+index_load_ms=8.873
+preloaded_structure_lookup_us=3.500
+structure_query_total_ms=8.877
+filesystem_traversal_ms=1378.383
+speedup_preloaded_lookup_vs_traversal=393823.706
+speedup_end_to_end_query_vs_traversal=155.278
+size_bytes=63963
+file_count=1001
+dir_count=4
+state=RESOLVED
+
+C:\Users\ASUS\Desktop\STRUE>python STRUE_v1_2.py demo --root STRUE_DEMO_10K --files 10000 --clean
+STRUE_DEMO_TREE
+root=C:\Users\ASUS\Desktop\STRUE\STRUE_DEMO_10K
+files_created=10001
+STRUE_INIT
+root=C:\Users\ASUS\Desktop\STRUE\STRUE_DEMO_10K
+capsules=10006
+root_size_bytes=639915
+root_file_count=10001
+root_dir_count=5
+root_certificate=517a089aa9eed745b4632bd4b85bb62fbb57cef046e9ba66cbb68d079df504c4
+truth_certificate=6a2856cec3342e960d13ce601ff5c74992ba104bf62dd18607a2fa879ffca650
+elapsed_ms=14324.714
+STRUE_PROPERTIES
+path=Project
+state=RESOLVED
+size_bytes=639915
+file_count=10001
+dir_count=4
+mutation_id=1
+certificate=2b30ff5d8018750324e8cf1fb05f0728fbe8f55876c599a4b1d799ac0196b6d3
+truth_source=maintained_structure
+traversal_used_for_property_lookup=false
+valid_when=structure_current
+staleness_model=explicit_sync_required_for_out_of_band_changes
+claim=traversal-free property retrieval given a maintained current structure
+preloaded_structure_lookup_us=5.000
+
+C:\Users\ASUS\Desktop\STRUE>
+C:\Users\ASUS\Desktop\STRUE>python STRUE_v1_2.py benchmark --root STRUE_DEMO_10K --path Project
+STRUE_BENCHMARK
+path=Project
+status=PASS
+benchmark_scope=query-time retrieval with maintained current structure
+lookup_mode=preloaded_index
+end_to_end_mode=index_load_plus_lookup
+staleness_model=explicit_sync_required_for_out_of_band_changes
+claim=traversal-free property retrieval given a maintained current structure
+lookup_complexity=O(1)_with_preloaded_current_structure
+traversal_complexity=O(n)_filesystem_walk
+benchmark_scope_precision=speedups_are_descriptive_measurements_not_universal_guarantees
+index_load_ms=72.324
+preloaded_structure_lookup_us=3.600
+structure_query_total_ms=72.328
+filesystem_traversal_ms=12267.803
+speedup_preloaded_lookup_vs_traversal=3407722.852
+speedup_end_to_end_query_vs_traversal=169.614
+size_bytes=639915
+file_count=10001
+dir_count=4
+state=RESOLVED
+
+C:\Users\ASUS\Desktop\STRUE>python STRUE_v1_2.py demo --root STRUE_DEMO_50K --files 50000 --clean
+STRUE_DEMO_TREE
+root=C:\Users\ASUS\Desktop\STRUE\STRUE_DEMO_50K
+files_created=50001
+STRUE_INIT
+root=C:\Users\ASUS\Desktop\STRUE\STRUE_DEMO_50K
+capsules=50006
+root_size_bytes=3199963
+root_file_count=50001
+root_dir_count=5
+root_certificate=12a001aa85a0129dd7772751df911598110fdb4f266f1c531f50d9f9d30cbc54
+truth_certificate=00f14c07d38cd8e423d0f298f54635f9e2f5a2f76f8c5fef754374f844fb2440
+elapsed_ms=63096.271
+STRUE_PROPERTIES
+path=Project
+state=RESOLVED
+size_bytes=3199963
+file_count=50001
+dir_count=4
+mutation_id=1
+certificate=0f681518472eb26043d420005ddabe4399367ceb30754bdf88f0b6b02817f90a
+truth_source=maintained_structure
+traversal_used_for_property_lookup=false
+valid_when=structure_current
+staleness_model=explicit_sync_required_for_out_of_band_changes
+claim=traversal-free property retrieval given a maintained current structure
+preloaded_structure_lookup_us=4.100
+
+C:\Users\ASUS\Desktop\STRUE>
+C:\Users\ASUS\Desktop\STRUE>python STRUE_v1_2.py benchmark --root STRUE_DEMO_50K --path Project
+STRUE_BENCHMARK
+path=Project
+status=PASS
+benchmark_scope=query-time retrieval with maintained current structure
+lookup_mode=preloaded_index
+end_to_end_mode=index_load_plus_lookup
+staleness_model=explicit_sync_required_for_out_of_band_changes
+claim=traversal-free property retrieval given a maintained current structure
+lookup_complexity=O(1)_with_preloaded_current_structure
+traversal_complexity=O(n)_filesystem_walk
+benchmark_scope_precision=speedups_are_descriptive_measurements_not_universal_guarantees
+index_load_ms=307.726
+preloaded_structure_lookup_us=4.300
+structure_query_total_ms=307.731
+filesystem_traversal_ms=47577.190
+speedup_preloaded_lookup_vs_traversal=11064462.789
+speedup_end_to_end_query_vs_traversal=154.607
+size_bytes=3199963
+file_count=50001
+dir_count=4
+state=RESOLVED
+
+C:\Users\ASUS\Desktop\STRUE>python STRUE_v1_2.py benchmark --root STRUE_DEMO_1K --path Project
+STRUE_BENCHMARK
+path=Project
+status=PASS
+benchmark_scope=query-time retrieval with maintained current structure
+lookup_mode=preloaded_index
+end_to_end_mode=index_load_plus_lookup
+staleness_model=explicit_sync_required_for_out_of_band_changes
+claim=traversal-free property retrieval given a maintained current structure
+lookup_complexity=O(1)_with_preloaded_current_structure
+traversal_complexity=O(n)_filesystem_walk
+benchmark_scope_precision=speedups_are_descriptive_measurements_not_universal_guarantees
+index_load_ms=7.356
+preloaded_structure_lookup_us=2.900
+structure_query_total_ms=7.359
+filesystem_traversal_ms=1297.563
+speedup_preloaded_lookup_vs_traversal=447435.650
+speedup_end_to_end_query_vs_traversal=176.333
+size_bytes=63963
+file_count=1001
+dir_count=4
+state=RESOLVED
+
+C:\Users\ASUS\Desktop\STRUE>
+C:\Users\ASUS\Desktop\STRUE>python STRUE_v1_2.py benchmark --root STRUE_DEMO_10K --path Project
+STRUE_BENCHMARK
+path=Project
+status=PASS
+benchmark_scope=query-time retrieval with maintained current structure
+lookup_mode=preloaded_index
+end_to_end_mode=index_load_plus_lookup
+staleness_model=explicit_sync_required_for_out_of_band_changes
+claim=traversal-free property retrieval given a maintained current structure
+lookup_complexity=O(1)_with_preloaded_current_structure
+traversal_complexity=O(n)_filesystem_walk
+benchmark_scope_precision=speedups_are_descriptive_measurements_not_universal_guarantees
+index_load_ms=69.657
+preloaded_structure_lookup_us=4.000
+structure_query_total_ms=69.661
+filesystem_traversal_ms=13136.740
+speedup_preloaded_lookup_vs_traversal=3284184.908
+speedup_end_to_end_query_vs_traversal=188.582
+size_bytes=639915
+file_count=10001
+dir_count=4
+state=RESOLVED
+
+C:\Users\ASUS\Desktop\STRUE>
+C:\Users\ASUS\Desktop\STRUE>python STRUE_v1_2.py benchmark --root STRUE_DEMO_50K --path Project
+STRUE_BENCHMARK
+path=Project
+status=PASS
+benchmark_scope=query-time retrieval with maintained current structure
+lookup_mode=preloaded_index
+end_to_end_mode=index_load_plus_lookup
+staleness_model=explicit_sync_required_for_out_of_band_changes
+claim=traversal-free property retrieval given a maintained current structure
+lookup_complexity=O(1)_with_preloaded_current_structure
+traversal_complexity=O(n)_filesystem_walk
+benchmark_scope_precision=speedups_are_descriptive_measurements_not_universal_guarantees
+index_load_ms=482.527
+preloaded_structure_lookup_us=4.700
+structure_query_total_ms=482.531
+filesystem_traversal_ms=53019.383
+speedup_preloaded_lookup_vs_traversal=11280720.180
+speedup_end_to_end_query_vs_traversal=109.878
+size_bytes=3199963
+file_count=50001
+dir_count=4
+state=RESOLVED

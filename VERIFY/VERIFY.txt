@@ -1,0 +1,436 @@
+# ⭐ **STRUE Verification — Structural Truth**
+
+## **Structural Truth Engine**
+
+---
+
+# **1. Open The Reference Demonstration**
+
+Option A (recommended)
+
+```
+python demo/STRUE_v1_2.py demo --root STRUE_DEMO --files 1000 --clean
+```
+
+Then run verification:
+
+```
+python demo/STRUE_v1_2.py verify --root STRUE_DEMO
+```
+
+Option B (Benchmark Observability)
+
+```
+python demo/STRUE_v1_2.py benchmark --root STRUE_DEMO --path Project
+```
+
+---
+
+# **2. Observe**
+
+- deterministic structural truth retrieval
+- maintained current structure preserves observable truth
+- replay remains deterministic
+- corruption becomes observable
+- recovery uses preserved structure
+- identical structure produces identical truth
+- identical structure produces identical certificates
+- no external libraries
+- structure preserves truth
+- observability retrieves preserved truth
+
+---
+
+# **3. Expected Baseline States**
+
+### Complete Structure
+
+```
+truth_state: RESOLVED
+truth_visible: True
+certificate: <stable hash>
+```
+
+### Incomplete Structure
+
+```
+truth_state: PARTIAL
+truth_visible: False
+reason: incomplete structural state
+```
+
+### Corrupted Structure
+
+```
+truth_state: FAIL
+truth_visible: False
+reason: structural inconsistency detected
+```
+
+### Replay Verification
+
+```
+same structure
+-> same truth
+-> same certificate
+```
+
+---
+
+# **4. Structural Truth Rule**
+
+`observable_truth = resolve(structure_state)`
+
+Truth visibility depends upon:
+
+- structural completeness
+- structural consistency
+- propagated structural state
+
+Therefore:
+
+`same structure -> same truth`
+
+`same structure -> same certificate`
+
+Truth retrieval explores maintained structure rather than repeated recursive rediscovery.
+
+---
+
+# **5. Expected Behavior**
+
+maintained structure
+
+↓
+
+observable truth
+
+incomplete structure
+
+↓
+
+incomplete truth
+
+corrupted structure
+
+↓
+
+verification failure
+
+preserved structure
+
+↓
+
+recoverable truth
+
+---
+
+# **6. Verify Determinism**
+
+Run repeatedly:
+
+```
+python demo/STRUE_v1_2.py verify --root STRUE_DEMO
+```
+
+Expected:
+
+- same truth
+- same certificate
+- replay stability
+
+Confirm:
+
+`same structure -> same truth -> same certificate`
+
+---
+
+# **7. Verify Representative Cases**
+
+### Case 1 — Deterministic Replay
+
+Expected:
+
+```
+truth_state: RESOLVED
+truth_visible: True
+certificate: stable
+```
+
+---
+
+### Case 2 — Corruption Detection
+
+Introduce corruption.
+
+Expected:
+
+```
+verification failure
+structural inconsistency detected
+certificate mismatch
+```
+
+---
+
+### Case 3 — Recovery
+
+Run recovery.
+
+Expected:
+
+```
+observable truth reconstructed
+verification restored
+truth becomes observable again
+```
+
+---
+
+### Case 4 — Replay Stability
+
+Run verification repeatedly.
+
+Expected:
+
+```
+first certificate == second certificate
+replay stability confirmed
+```
+
+---
+
+### Case 5 — Enumeration Variation
+
+Change traversal ordering.
+
+Expected:
+
+```
+truth unchanged
+certificate unchanged
+```
+
+---
+
+# **8. Structural Truth vs Recursive Rediscovery**
+
+Compare:
+
+Traditional approach:
+
+```
+folder
+↓
+recursive traversal
+↓
+property reconstruction
+↓
+truth retrieval
+```
+
+STRUE exploration:
+
+```
+maintained structure
+↓
+observable truth
+↓
+retrieval
+```
+
+Observation:
+
+Repeated rediscovery may not fundamentally determine truth retrieval within the bounded structural model.
+
+---
+
+# **9. Verify Distinct Structural States**
+
+Expected:
+
+Different structure
+
+↓
+
+Different observable truth may emerge
+
+Different structure
+
+↓
+
+Different certificates may occur
+
+Confirm:
+
+`different structure -> certificate may differ`
+
+---
+
+# **10. Verify Incomplete Safety**
+
+Create incomplete structure.
+
+Expected:
+
+```
+truth_state: PARTIAL
+truth_visible: False
+reason reported
+```
+
+---
+
+# **11. Verify Corruption Safety**
+
+Inject corruption.
+
+Expected:
+
+```
+verification failure
+truth_visible: False
+certificate mismatch
+```
+
+---
+
+# **12. Verify Replay Independence**
+
+Change:
+
+- traversal ordering
+- replay ordering
+- enumeration ordering
+
+Expected:
+
+If structure remains identical:
+
+```
+truth unchanged
+certificate unchanged
+```
+
+---
+
+# **13. Verify Structural Transitions**
+
+Expected:
+
+```
+complete structure      -> RESOLVED
+incomplete structure    -> PARTIAL
+corrupted structure     -> FAIL
+```
+
+State transitions should follow structure.
+
+---
+
+# **14. Verify Certificate Components**
+
+Certificates are expected to derive from structural truth components such as:
+
+- propagated structural state
+- capsule state
+- mutation state
+- observable truth state
+
+Traversal ordering alone should not change certificates when structure remains identical.
+
+---
+
+# **15. Normalization Requirement**
+
+`normalized_truth = normalize(observable_truth)`
+
+`certificate = hash(normalized_truth)`
+
+Expected:
+
+- certificate depends only upon normalized truth
+- representation format does not change certificate
+- replay ordering does not change certificate
+
+Reference implementation:
+
+SHA-256 (truncated) used for demonstration.
+
+---
+
+# **16. Verify File Identity**
+
+Hash demo script:
+
+```
+certutil -hashfile demo\STRUE_v1_2.py SHA256
+```
+
+Hash browser explorer:
+
+```
+certutil -hashfile demo\STRUE-Explorer-v1_2.html SHA256
+```
+
+Note:
+
+file hash = file identity
+
+certificate = structural truth artifact
+
+---
+
+# **17. Structural Truth Model**
+
+`resolve(structure_state) ->`
+
+```
+RESOLVED      if structure complete and consistent
+PARTIAL       if structure incomplete
+FAIL          if structure inconsistent
+```
+
+---
+
+# **18. Core Invariant**
+
+`observable_truth = resolve(structure_state)`
+
+`same structure -> same truth -> same certificate`
+
+Claims apply only within the bounded STRUE reference demonstrations.
+
+---
+
+# **19. Confirm**
+
+identical structure
+
+↓
+
+identical truth
+
+identical structure
+
+↓
+
+identical certificate
+
+structure preserved
+
+↓
+
+truth remains observable
+
+recursive rediscovery is not assumed to fundamentally determine truth retrieval within the modeled structural space.
+
+---
+
+# **Result**
+
+Deterministic structural truth behavior demonstrated within the STRUE reference model.
+
+Bounded truth retrieval is explored through maintained structure rather than repeated recursive rediscovery.
+
+**Structure first. Truth always.**
