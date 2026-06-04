@@ -15,6 +15,8 @@
 ![Open-Standard](https://img.shields.io/badge/Open-Standard-blue)
 ![Shunyaya](https://img.shields.io/badge/Part%20of-Shunyaya%20Ecosystem-gold)
 
+![STRUE Verify](https://github.com/OMPSHUNYAYA/STRUE/actions/workflows/strue-verify.yml/badge.svg)
+
 ---
 
 **Why recursively rediscover folder truth when structure may already preserve it?**
@@ -611,6 +613,7 @@ The local server step is therefore required.
 - [Proof Sketch](docs/Proof-Sketch.md)
 - [STRUE Architecture Notes](docs/STRUE-Architecture-Notes.md)
 - [STRUE Challenge](docs/STRUE-Challenge.md)
+- [STRUE Architecture Diagram](docs/STRUE-Diagram.png)
 
 ### **Verification & Benchmark Artifacts**
 
@@ -618,6 +621,15 @@ The local server step is therefore required.
 - [Freeze Hashes](VERIFY/FREEZE_DEMO_SHA256.txt)
 - [Benchmark Summary](VERIFY/benchmark_summary.txt)
 - [Benchmark Raw Results](VERIFY/benchmark_raw_results.txt)
+
+### **Ecosystem Context**
+
+These diagrams provide broader structural context surrounding STRUE.
+
+They represent ecosystem context — **not additional STRUE guarantees.**
+
+- [Dependency Elimination Framework](docs/Dependency-Elimination-Framework.png)
+- [Shunyaya Structural Stack](docs/Shunyaya-Structural-Stack.png)
 
 ---
 
