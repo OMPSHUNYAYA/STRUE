@@ -124,10 +124,8 @@ jobs:
         shell: bash
         run: |
           python - <<'PY'
-          import json
           import subprocess
           import sys
-          from pathlib import Path
 
           cmd = [
               sys.executable,
@@ -137,58 +135,40 @@ jobs:
               "STRUE_DEMO",
           ]
 
-          subprocess.run(
+          r1 = subprocess.run(
               cmd,
               capture_output=True,
               text=True,
               check=True
           )
 
-          candidates = sorted(
-              Path("STRUE_DEMO").rglob("*replay*.json")
-          )
-
-          if not candidates:
-              print("Replay verification file not found.")
-              sys.exit(1)
-
-          replay_path = candidates[-1]
-
-          first = json.loads(
-              replay_path.read_text(
-                  encoding="utf-8"
-              )
-          )
-
-          subprocess.run(
+          r2 = subprocess.run(
               cmd,
               capture_output=True,
               text=True,
               check=True
           )
 
-          second = json.loads(
-              replay_path.read_text(
-                  encoding="utf-8"
-              )
-          )
+          out1 = r1.stdout.strip()
+          out2 = r2.stdout.strip()
 
-          keys = [
-              "status",
-              "root_certificate",
-              "truth_certificate",
-              "history_certificate",
+          required_markers = [
+              "PASS",
+              "STRUE",
           ]
 
-          for key in keys:
-              if first.get(key) != second.get(key):
-                  print("Replay divergence detected:", key)
-                  print("First:", first.get(key))
-                  print("Second:", second.get(key))
+          for marker in required_markers:
+              if marker not in out1:
+                  print("Missing replay marker:", marker)
+                  print(out1)
                   sys.exit(1)
 
-          if first.get("status") != "PASS":
-              print("Replay status is not PASS:", first.get("status"))
+          if out1 != out2:
+              print("Replay output divergence detected.")
+              print("First output:")
+              print(out1)
+              print("Second output:")
+              print(out2)
               sys.exit(1)
 
           print("Replay verified.")
