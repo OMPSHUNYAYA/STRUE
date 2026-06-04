@@ -1,4 +1,3 @@
-```yaml
 name: strue-verify
 
 on:
@@ -273,4 +272,3 @@ jobs:
           )
 
           PY
-```
