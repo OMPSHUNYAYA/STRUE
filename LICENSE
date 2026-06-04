@@ -1,0 +1,361 @@
+Open Standard License — STRUE Reference Implementation
+
+STRUE — Structural Truth Engine
+
+Shunyaya Structural Truth Model
+
+Legal Status
+
+This license is a permissive Open Standard license for the STRUE reference implementation.
+
+To the maximum extent permitted by applicable law, this license grants rights similar in spirit to permissive open-source licenses.
+
+These rights apply subject to truthful representation requirements regarding use of the STRUE name and representation of the reference implementation.
+
+If any provision is found unenforceable, remaining provisions remain in effect.
+
+Nature of Release
+
+This is a minimal, self-contained reference implementation.
+
+It is intended to demonstrate structural truth preservation and observability — not to represent a filesystem replacement, storage platform, operating system component, database engine, or production observability infrastructure.
+
+Behavioral observations apply only within the scope of the reference implementation and its defined structural assumptions.
+
+Permission
+
+Permission is hereby granted, free of charge, to any person or organization to:
+
+use
+
+execute
+
+study
+
+reproduce
+
+publish
+
+distribute
+
+modify
+
+implement
+
+extend
+
+the STRUE reference implementation, in whole or in part, for commercial or non-commercial use, subject only to the representation and naming conditions defined in this license.
+
+No registration, fees, or approval required.
+
+Ownership
+
+No ownership transfer occurs through this license.
+
+This license grants permissions only.
+
+No Restrictions on Use
+
+This reference implementation imposes no restrictions on usage except:
+
+truthful representation
+
+non-misleading use of the STRUE name
+
+Attribution is not required but is encouraged for clarity and ecosystem integrity.
+
+No endorsement or certification is implied.
+
+No runtime obligations apply.
+
+Separation of License and Structural Truth
+
+This license governs legal usage, distribution, and representation.
+
+It does not govern, alter, or override structural correctness.
+
+Structural correctness is defined independently by:
+
+`truth = resolve(structure_state)`
+
+Legal permission does not imply structural validity.
+
+Structural validity does not depend on legal permission.
+
+Practical Interpretation
+
+This license governs usage and representation.
+
+It does not govern correctness.
+
+Correctness within this model is determined solely by structure:
+
+`structure_complete = TRUE`
+
+and
+
+`structure_consistent = TRUE`
+
+Licensing governs usage — not correctness.
+
+Structural truth is represented through deterministic observable truth outcomes.
+
+Proof is represented through certificates.
+
+Deterministic structural reproducibility is expressed as:
+
+`same structure -> same truth -> same certificate`
+
+Observable divergence may be expressed as:
+
+`different structure -> observable truth may differ`
+
+Clarification — Procedural Systems as Capability
+
+This statement refers specifically to correctness as a property of structure.
+
+The reference implementation may use procedural systems for:
+
+runtime capability
+
+storage interaction
+
+rendering
+
+interface behavior
+
+certificate generation
+
+observability surfaces
+
+However, such procedural systems are not the source of correctness.
+
+Correctness is determined solely by structural truth preservation.
+
+Key distinction:
+
+Traditional systems often assume:
+
+`structure -> traversal -> properties -> observable_truth`
+
+STRUE explores:
+
+`maintained_current_structure -> observable_truth -> query_time_property_retrieval`
+
+Traversal may reveal observable truth.
+
+STRUE explores whether traversal fundamentally determines query-time property retrieval.
+
+Representation & Naming
+
+Modified or extended implementations:
+
+must not be presented as the canonical STRUE reference implementation unless structural behavior is preserved
+
+must not imply official authorship, certification, or endorsement
+
+Modified implementations should clearly indicate that changes were made.
+
+Use of the name STRUE must not imply:
+
+endorsement
+
+certification
+
+governance authority
+
+official status
+
+Recommended Attribution (Optional)
+
+Preferred form:
+
+Implements STRUE — Structural Truth Engine
+
+Attribution must not imply endorsement.
+
+Scope of the Reference Implementation
+
+This release includes:
+
+structural truth capsules
+
+deterministic certificates
+
+replay-safe verification
+
+structural recovery demonstrations
+
+observability tooling
+
+browser observatory demonstrations
+
+reference traces and certificates
+
+What This Demonstrates
+
+deterministic structural truth preservation
+
+replay-safe truth reconstruction
+
+certificate reproducibility
+
+corruption detection
+
+truth recovery
+
+query-time property retrieval exploration from maintained current structure
+
+deterministic structural evolution
+
+Conformance
+
+For purposes of this reference license, an implementation may be considered compatible if it preserves:
+
+structure-based correctness
+
+deterministic truth resolution
+
+certificate reproducibility
+
+deterministic replay behavior
+
+structural truth visibility
+
+equivalent truth under equivalent structure
+
+explicit handling of structural inconsistency
+
+For purposes of this reference license and reference implementation, conformance is evaluated through observable behavior.
+
+`same structure -> same observable truth -> same certificate`
+
+Normalization Requirement
+
+For deterministic certificate identity:
+
+`normalized_truth = normalize(truth)`
+
+`certificate = hash(normalized_truth)`
+
+Normalization ensures:
+
+independence from representation format
+
+consistent identity across systems
+
+consistent replay behavior
+
+SHA-256 is used in the reference implementation for demonstration.
+
+Deterministic Replay Property
+
+Replay explores preservation of the invariant:
+
+`same structure -> same observable truth -> same certificate`
+
+Within the bounded reference model, replay explores preservation of observable truth under identical structural conditions.
+
+This explores:
+
+replay -> same observable truth
+
+Observable truth depends upon structure.
+
+Not replay ordering or replay sequence.
+
+Relationship to Shunyaya Framework
+
+STRUE is part of the broader Shunyaya framework.
+
+It builds upon a broader structural direction exploring dependency elimination and structure-preserved correctness.
+
+Each direction explores removal of assumed dependencies while preserving correctness through structure.
+
+Architecture License
+
+Conceptual architecture and documentation are licensed under:
+
+CC BY-NC 4.0
+
+Permitted:
+
+research
+
+academic use
+
+study
+
+non-commercial distribution
+
+Commercial use of architecture text is not permitted under this license.
+
+Responsibility
+
+Use of STRUE in real-world systems is entirely at the user’s own responsibility.
+
+This reference implementation demonstrates:
+
+deterministic structural truth preservation
+
+certificate reproducibility
+
+replay-safe observability
+
+structural recovery demonstrations
+
+It does not provide:
+
+filesystem guarantees
+
+performance guarantees
+
+storage guarantees
+
+operating system guarantees
+
+real-time guarantees
+
+safety-critical assurances
+
+regulatory guarantees
+
+Observed benchmark results should not be interpreted as universal performance guarantees.
+
+No Warranty
+
+THE STRUE REFERENCE IMPLEMENTATION IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
+
+THIS INCLUDES BUT IS NOT LIMITED TO:
+
+MERCHANTABILITY
+
+FITNESS FOR A PARTICULAR PURPOSE
+
+NON-INFRINGEMENT
+
+IN NO EVENT SHALL AUTHORS OR CONTRIBUTORS BE LIABLE FOR CLAIMS, DAMAGES, OR OTHER LIABILITY ARISING FROM USE OF THIS IMPLEMENTATION.
+
+Closing Statement
+
+STRUE explores a simple but fundamental question:
+
+Observable truth may remain structurally visible.
+
+Maintained current structure may preserve observable truth.
+
+STRUE explores whether traversal-based rediscovery during retrieval is fundamentally required within the bounded reference model.
+
+Traversal may reveal truth.
+
+Structure may preserve observable truth.
+
+STRUE is released to encourage:
+
+independent validation
+
+real-world testing
+
+safe experimentation
+
+STRUE is offered as a minimal, verifiable reference implementation of that possibility.
